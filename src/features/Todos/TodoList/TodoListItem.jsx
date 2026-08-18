@@ -1,6 +1,6 @@
-import TextInputWithLabel from '../../shared/TextInputWithLabel';
-import { useEditableTitle } from '../../hooks/useEditableTitle';
-import { isValidTodoTitle } from '../../utils/todoValidation';
+import TextInputWithLabel from '../../../shared/TextInputWithLabel';
+import { useEditableTitle } from '../../../hooks/useEditableTitle';
+import { isValidTodoTitle } from '../../../utils/todoValidation';
 
 function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
     const {
