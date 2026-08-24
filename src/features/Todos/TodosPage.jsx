@@ -8,6 +8,12 @@ function TodosPage({ token }) {
   const [isTodoListLoading, setIsTodoListLoading] = useState(false);
 
   useEffect(() => {
+  if (!token) {
+    return;
+  }
+
+  let ignore = false;
+
   async function fetchTodos() {
     setIsTodoListLoading(true);
     setError('');
@@ -34,18 +40,26 @@ function TodosPage({ token }) {
 
       const data = await response.json();
 
-      setTodoList(data.tasks);
+      if (!ignore) {
+        setTodoList(data.tasks);
+      }
     } catch (error) {
-      setError(error.message);
+      if (!ignore) {
+        setError(error.message);
+      }
     } finally {
-      setIsTodoListLoading(false);
+      if (!ignore) {
+        setIsTodoListLoading(false);
+      }
     }
   }
 
-  if (token) {
-    fetchTodos();
-      }
-  }, [token]);
+  fetchTodos();
+
+  return () => {
+    ignore = true;
+  };
+}, [token]);
 
   async function addTodo(todoTitle) {
     setError('');
