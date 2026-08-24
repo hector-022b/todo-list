@@ -1,9 +1,20 @@
 function Header({ token, onSetToken, onSetEmail }) {
-  void token;
-  void onSetToken;
-  void onSetEmail;
+  function handleLogoff() {
+    onSetToken('');
+    onSetEmail('');
+  }
 
-  return <h1>Todo List</h1>;
+  return (
+    <header>
+      <h1>Todo List</h1>
+
+      {token && (
+        <button type="button" onClick={handleLogoff}>
+          Log Out
+        </button>
+      )}
+    </header>
+  );
 }
 
 export default Header;

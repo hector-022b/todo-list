@@ -8,42 +8,43 @@ function TodosPage({ token }) {
   const [isTodoListLoading, setIsTodoListLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchTodos() {
-      setIsTodoListLoading(true);
-      setError('');
+  async function fetchTodos() {
+    setIsTodoListLoading(true);
+    setError('');
 
-      try {
-        const params = new URLSearchParams({
-          limit: 100,
-        });
+    try {
+      const params = new URLSearchParams({
+        limit: 100,
+      });
 
-        const response = await fetch(`/api/tasks?${params}`, {
-          headers: {
-            'X-CSRF-TOKEN': token,
-          },
-          credentials: 'include',
-        });
+      const response = await fetch(`/api/tasks?${params}`, {
+        headers: {
+          'X-CSRF-TOKEN': token,
+        },
+        credentials: 'include',
+      });
 
-        if (response.status === 401) {
-          throw new Error('unauthorized');
-        }
+      if (response.status === 401) {
+        throw new Error('unauthorized');
+      }
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch todos');
-          }
-          
-          const data = await response.json();
-          setTodoList(data.tasks);
-      } catch (error) {
-          setError(error.message);
-      } finally {
-          setIsTodoListLoading(false);
-        }
+      if (!response.ok) {
+        throw new Error('Failed to fetch todos');
+      }
+
+      const data = await response.json();
+
+      setTodoList(data.tasks);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsTodoListLoading(false);
     }
+  }
 
-    if (token) {
-      fetchTodos();
-    }
+  if (token) {
+    fetchTodos();
+      }
   }, [token]);
 
   async function addTodo(todoTitle) {
