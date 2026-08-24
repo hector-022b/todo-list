@@ -19,7 +19,10 @@ function Logon({ onSetEmail, onSetToken }) {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          password,
+        }),
       });
 
       const data = await response.json();
@@ -28,7 +31,9 @@ function Logon({ onSetEmail, onSetToken }) {
         onSetEmail(data.name);
         onSetToken(data.csrfToken);
       } else {
-        setAuthError(`Authentication failed: ${data?.message}`);
+        setAuthError(
+          `Authentication failed: ${data?.message || 'Invalid email or password'}`
+        );
       }
     } catch (error) {
       setAuthError(`Error: ${error.name} | ${error.message}`);
@@ -39,7 +44,11 @@ function Logon({ onSetEmail, onSetToken }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      {authError && <p>{authError}</p>}
+      {authError && (
+        <div>
+          <p>{authError}</p>
+        </div>
+      )}
 
       <div>
         <label htmlFor="email">Email</label>

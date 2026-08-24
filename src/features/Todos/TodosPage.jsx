@@ -9,10 +9,6 @@ function TodosPage({ token }) {
 
   useEffect(() => {
     async function fetchTodos() {
-      if (!token) {
-        return;
-      }
-
       setIsTodoListLoading(true);
       setError('');
 
@@ -29,7 +25,7 @@ function TodosPage({ token }) {
         });
 
         if (response.status === 401) {
-          throw new Error('Unauthorized');
+          throw new Error('unauthorized');
         }
 
         if (!response.ok) {
@@ -39,23 +35,30 @@ function TodosPage({ token }) {
         const data = await response.json();
         setTodoList(data.tasks);
       } catch (error) {
-        setError(error.message);
+        if (error.message === 'unauthorized') {
+          setError('unauthorized');
+        } else {
+          setError(`Error fetching todos: ${error.message}`);
+        }
       } finally {
         setIsTodoListLoading(false);
       }
     }
 
-    fetchTodos();
+    if (token) {
+      fetchTodos();
+    }
   }, [token]);
 
   async function addTodo(todoTitle) {
+    setError('');
+
     const newTodo = {
       id: Date.now(),
       title: todoTitle,
       isCompleted: false,
     };
 
-    // Optimistically add the todo immediately.
     setTodoList(previous => [newTodo, ...previous]);
 
     try {
@@ -77,28 +80,31 @@ function TodosPage({ token }) {
       }
 
       const data = await response.json();
+      const savedTodo = data.task ?? data;
 
       setTodoList(previous =>
         previous.map(todo =>
-          todo.id === newTodo.id ? data : todo
+          todo.id === newTodo.id ? savedTodo : todo
         )
       );
     } catch (error) {
       setTodoList(previous =>
         previous.filter(todo => todo.id !== newTodo.id)
       );
-      setError(error.message);
+
+      setError(`Error adding todo: ${error.message}`);
     }
   }
 
   async function completeTodo(id) {
+    setError('');
+
     const originalTodo = todoList.find(todo => todo.id === id);
 
     if (!originalTodo) {
       return;
     }
 
-    // Optimistically mark the todo as completed.
     setTodoList(previous =>
       previous.map(todo =>
         todo.id === id
@@ -123,17 +129,31 @@ function TodosPage({ token }) {
       if (!response.ok) {
         throw new Error('Failed to complete todo');
       }
+
+      const data = await response.json();
+      const savedTodo = data.task ?? data;
+
+      if (savedTodo?.id) {
+        setTodoList(previous =>
+          previous.map(todo =>
+            todo.id === id ? savedTodo : todo
+          )
+        );
+      }
     } catch (error) {
       setTodoList(previous =>
         previous.map(todo =>
           todo.id === id ? originalTodo : todo
         )
       );
-      setError(error.message);
+
+      setError(`Error completing todo: ${error.message}`);
     }
   }
 
   async function updateTodo(editedTodo) {
+    setError('');
+
     const originalTodo = todoList.find(
       todo => todo.id === editedTodo.id
     );
@@ -142,10 +162,11 @@ function TodosPage({ token }) {
       return;
     }
 
-    // Optimistically update the todo title.
     setTodoList(previous =>
       previous.map(todo =>
-        todo.id === editedTodo.id ? editedTodo : todo
+        todo.id === editedTodo.id
+          ? { ...todo, ...editedTodo }
+          : todo
       )
     );
 
@@ -166,25 +187,41 @@ function TodosPage({ token }) {
       if (!response.ok) {
         throw new Error('Failed to update todo');
       }
+
+      const data = await response.json();
+      const savedTodo = data.task ?? data;
+
+      if (savedTodo?.id) {
+        setTodoList(previous =>
+          previous.map(todo =>
+            todo.id === editedTodo.id ? savedTodo : todo
+          )
+        );
+      }
     } catch (error) {
       setTodoList(previous =>
         previous.map(todo =>
           todo.id === editedTodo.id ? originalTodo : todo
         )
       );
-      setError(error.message);
+
+      setError(`Error updating todo: ${error.message}`);
     }
   }
 
   return (
     <div>
       {error && (
-        <div>
+        <section>
           <p>{error}</p>
-          <button type="button" onClick={() => setError('')}>
+
+          <button
+            type="button"
+            onClick={() => setError('')}
+          >
             Clear Error
           </button>
-        </div>
+        </section>
       )}
 
       {isTodoListLoading && <p>Loading todos...</p>}

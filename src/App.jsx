@@ -5,13 +5,12 @@ import TodosPage from './features/Todos/TodosPage.jsx';
 import Logon from './features/Logon.jsx';
 
 function App() {
-  const [email, setEmail] = useState('');
+  const [, setEmail] = useState('');
   const [token, setToken] = useState('');
 
   return (
     <div>
       <Header
-        email={email}
         token={token}
         onSetToken={setToken}
         onSetEmail={setEmail}
