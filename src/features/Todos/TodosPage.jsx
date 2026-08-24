@@ -30,19 +30,15 @@ function TodosPage({ token }) {
 
         if (!response.ok) {
           throw new Error('Failed to fetch todos');
-        }
-
-        const data = await response.json();
-        setTodoList(data.tasks);
+          }
+          
+          const data = await response.json();
+          setTodoList(data.tasks);
       } catch (error) {
-        if (error.message === 'unauthorized') {
-          setError('unauthorized');
-        } else {
-          setError(`Error fetching todos: ${error.message}`);
-        }
+          setError(error.message);
       } finally {
-        setIsTodoListLoading(false);
-      }
+          setIsTodoListLoading(false);
+        }
     }
 
     if (token) {
@@ -211,18 +207,21 @@ function TodosPage({ token }) {
 
   return (
     <div>
-      {error && (
-        <section>
-          <p>{error}</p>
-
-          <button
-            type="button"
-            onClick={() => setError('')}
-          >
-            Clear Error
-          </button>
-        </section>
-      )}
+          {error && (
+              <section>
+                  <p>
+                      {error === 'unauthorized' ? 'You are not authorized. Please log in again.'
+                      : error}
+                  </p>
+                  
+                  <button
+                      type="button"
+                      onClick={() => setError('')}
+                  >
+                      Clear Error
+                  </button>
+              </section>
+          )}
 
       {isTodoListLoading && <p>Loading todos...</p>}
 
