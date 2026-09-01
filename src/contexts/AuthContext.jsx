@@ -83,7 +83,7 @@ export function AuthProvider({ children }) {
         } catch (error) {
             return {
             success: false,
-            error: `Logout failed: ${error.message}`,
+            error: `Logged out locally, but server logout failed: ${error.message}`,
             };
         } finally {
             setEmail('');
