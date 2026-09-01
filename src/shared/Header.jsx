@@ -1,14 +1,17 @@
-function Header({ email, token, onSetToken, onSetEmail }) {
-  function handleLogoff() {
-    onSetToken('');
-    onSetEmail('');
+import { useAuth } from '../contexts/AuthContext.jsx';
+
+function Header() {
+  const { email, isAuthenticated, logout } = useAuth();
+
+  async function handleLogoff() {
+    await logout();
   }
 
   return (
     <header>
       <h1>Todo List</h1>
 
-      {token && (
+      {isAuthenticated && (
         <>
           <p>{email}</p>
           <button type="button" onClick={handleLogoff}>
