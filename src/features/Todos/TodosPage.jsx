@@ -326,29 +326,28 @@ function TodosPage() {
 
       {isTodoListLoading && <p>Loading todos...</p>}
       
-      <SortBy
-        sortBy={sortBy}
-        sortDirection={sortDirection}
-        onSortByChange={(newSortBy) =>
-          dispatch({
-            type: TODO_ACTIONS.SET_SORT,
-            payload: {
-              sortBy: newSortBy,
-              sortDirection,
-            },
-          })
-        }
-      onSortDirectionChange={(newSortDirection) =>
-        dispatch({
-          type: TODO_ACTIONS.SET_SORT,
-          payload: {
-            sortBy,
-            sortDirection: newSortDirection,
-          },
-        })
-      }
-    />
-
+  <SortBy
+    sortBy={sortBy}
+    sortDirection={sortDirection}
+    onSortByChange={(newSortBy) =>
+      dispatch({
+        type: TODO_ACTIONS.SET_SORT,
+        payload: {
+          sortBy: newSortBy,
+          sortDirection,
+        },
+      })
+    }
+    onSortDirectionChange={(newSortDirection) =>
+      dispatch({
+        type: TODO_ACTIONS.SET_SORT,
+        payload: {
+          sortBy,
+          sortDirection: newSortDirection,
+        },
+      })
+    }
+  />
       <FilterInput
         filterTerm={filterTerm}
         onFilterChange={handleFilterChange}

@@ -174,6 +174,8 @@ export function todoReducer(state, action) {
             return {
                 ...state,
                 filterTerm: action.payload.filterTerm,
+                error: '',
+                filterError: '',
             };
         
         case TODO_ACTIONS.CLEAR_ERROR:
@@ -194,10 +196,11 @@ export function todoReducer(state, action) {
                 filterTerm: '',
                 sortBy: 'createdAt',
                 sortDirection: 'asc',
+                error: '',
                 filterError: '',
             };
                     
-    default:
-      throw new Error(`Unknown action type: ${action.type}`);
-  }
+        default:
+            throw new Error(`Unknown action type: ${action.type}`);
+    }
 }
