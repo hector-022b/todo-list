@@ -55,51 +55,45 @@ export function AuthProvider({ children }) {
     };
 
     const logout = async () => {
-        if (!token) {
-            setEmail('');
-            setToken('');
-
-            return {
+        let result = {
             success: true,
-            };
-        }
-
-        try {
-            const response = await fetch('/api/user/logoff', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': token,
-            },
-            credentials: 'include',
-            });
-
-            if (!response.ok) {
-            throw new Error('Failed to log out');
+        };
+        
+        if (token) {
+            try {
+                const response = await fetch('/api/user/logoff', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                    },
+                    credentials: 'include',
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to log out');
+                }
+            } catch (error) {
+                result = {
+                    success: false,
+                    error: `Logout failed: ${error.message}`,
+                };
             }
-
-            return {
-            success: true,
-            };
-        } catch (error) {
-            return {
-            success: false,
-            error: `Logged out locally, but server logout failed: ${error.message}`,
-            };
-        } finally {
-            setEmail('');
-            setToken('');
         }
-    };
 
+        setEmail('');
+        setToken('');
+        return result;
+    };
+    
     return (
         <AuthContext.Provider
-          value={{
-              email,
-              token,
-              isAuthenticated: !!token,
-              login,
-              logout,
-          }}
+            value={{
+                email,
+                token,
+                isAuthenticated: !!token,
+                login,
+                logout,
+            }}
         >
             {children}
         </AuthContext.Provider>

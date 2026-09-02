@@ -53,6 +53,7 @@ export function todoReducer(state, action) {
                 ...state,
                 todoList: action.payload.todos,
                 isTodoListLoading: false,
+                error: '',
                 filterError: '',
             };
       
@@ -72,6 +73,7 @@ export function todoReducer(state, action) {
             return {
                 ...state,
                 error: '',
+                filterError: '',
                 todoList: [action.payload.newTodo, ...state.todoList],
             };
         
@@ -99,6 +101,7 @@ export function todoReducer(state, action) {
             return {
                 ...state,
                 error: '',
+                filterError: '',
                 todoList: state.todoList.map((todo) =>
                 todo.id === action.payload.id
                     ? { ...todo, isCompleted: true }
@@ -132,6 +135,7 @@ export function todoReducer(state, action) {
             return {
                 ...state,
                 error: '',
+                filterError: '',
                 todoList: state.todoList.map((todo) =>
                 todo.id === action.payload.editedTodo.id
                     ? { ...todo, ...action.payload.editedTodo }
