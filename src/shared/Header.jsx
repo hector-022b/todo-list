@@ -1,33 +1,20 @@
-import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext.jsx';
+import Navigation from './Navigation.jsx';
+import Logoff from '../features/Logoff.jsx';
 
 function Header() {
-  const { email, isAuthenticated, logout } = useAuth();
-  const [logoutError, setLogoutError] = useState('');
-
-  async function handleLogoff() {
-    setLogoutError('');
-
-    const result = await logout();
-
-    if (!result.success) {
-      setLogoutError(result.error);
-    }
-  }
+  const { email, isAuthenticated } = useAuth();
 
   return (
     <header>
       <h1>Todo List</h1>
 
-      {logoutError && <p>{logoutError}</p>}
+      <Navigation />
 
       {isAuthenticated && (
         <>
           <p>{email}</p>
-
-          <button type="button" onClick={handleLogoff}>
-            Log Out
-          </button>
+          <Logoff />
         </>
       )}
     </header>
