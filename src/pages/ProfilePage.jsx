@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext.jsx';
+import styles from './Page.module.css';
 
 function ProfilePage() {
   const { email, token } = useAuth();
@@ -71,34 +72,36 @@ function ProfilePage() {
       : 0;
 
   return (
-    <div>
-      <h2>Profile</h2>
+    <div className={styles.page}>
+      <div className={styles.card}>
+        <h2 className={styles.title}>Profile</h2>
 
-      <section>
-        <h3>Account Information</h3>
-        <p>Name: {email}</p>
-        <p>Status: {token ? 'Authenticated' : 'Not Authenticated'}</p>
-      </section>
+        <section className={styles.section}>
+          <h3>Account Information</h3>
+          <p>Name: {email}</p>
+          <p>Status: {token ? 'Authenticated' : 'Not Authenticated'}</p>
+        </section>
 
-      <section>
-        <h3>Todo Statistics</h3>
+        <section className={styles.section}>
+          <h3>Todo Statistics</h3>
 
-        {loading ? (
-          <p>Loading statistics...</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : (
-          <>
-            <p>Total Todos: {todoStats.total}</p>
-            <p>Completed Todos: {todoStats.completed}</p>
-            <p>Active Todos: {todoStats.active}</p>
+          {loading ? (
+            <p className={styles.loading}>Loading statistics...</p>
+          ) : error ? (
+            <p className={styles.error}>{error}</p>
+          ) : (
+            <>
+              <p>Total Todos: {todoStats.total}</p>
+              <p>Completed Todos: {todoStats.completed}</p>
+              <p>Active Todos: {todoStats.active}</p>
 
-            {todoStats.total > 0 && (
-              <p>Completion: {completionPercentage}%</p>
-            )}
-          </>
-        )}
-      </section>
+              {todoStats.total > 0 && (
+                <p>Completion: {completionPercentage}%</p>
+              )}
+            </>
+          )}
+        </section>
+      </div>
     </div>
   );
 }

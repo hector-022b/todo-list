@@ -12,6 +12,7 @@ import useDebounce from '../utils/useDebounce.js';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { useSearchParams } from 'react-router';
 import StatusFilter from '../shared/StatusFilter.jsx';
+import styles from './TodosPage.module.css';
 
 function TodosPage() {
   const { token } = useAuth();
@@ -279,15 +280,17 @@ function TodosPage() {
 }
 
   return (
-    <div>
+    <div className={styles.page}>
+      <h2 className={styles.title}>My Todos</h2>
       {error && (
-        <section>
+        <section className={styles.error}>
           <p>
             {error === 'unauthorized' ? 'You are not authorized. Please log in again.'
               : error}
           </p>
           
           <button
+            className={styles.errorButton}
             type="button"
             onClick={() =>
               dispatch({
@@ -301,57 +304,62 @@ function TodosPage() {
       )}
 
       {filterError && (
-        <div>
+        <div className={styles.error}>
           <p>{filterError}</p>
-          
-          <button
-            type="button"
-            onClick={() =>
-              dispatch({
-                type: TODO_ACTIONS.CLEAR_FILTER_ERROR,
-              })
-            }
-          >
-            Clear Filter Error
-          </button>
-          
-          <button
-            type="button"
-            onClick={() =>
-              dispatch({
-                type: TODO_ACTIONS.RESET_FILTERS,
-              })
-            }
-          >
-            Reset Filters
-          </button>
-        </div>
+
+          <div className={styles.errorActions}>
+            <button
+              type="button"
+              onClick={() =>
+                dispatch({
+                  type: TODO_ACTIONS.CLEAR_FILTER_ERROR,
+                })
+              }
+            >
+              Clear Filter Error
+            </button>
+            
+            <button
+              type="button"
+              onClick={() =>
+                dispatch({
+                  type: TODO_ACTIONS.RESET_FILTERS,
+                })
+              }
+            >
+              Reset Filters
+            </button>
+            </div>
+          </div>
       )}
 
-      {isTodoListLoading && <p>Loading todos...</p>}
-      
-  <SortBy
-    sortBy={sortBy}
-    sortDirection={sortDirection}
-    onSortByChange={(newSortBy) =>
-      dispatch({
-        type: TODO_ACTIONS.SET_SORT,
-        payload: {
-          sortBy: newSortBy,
-          sortDirection,
-        },
-      })
-    }
-    onSortDirectionChange={(newSortDirection) =>
-      dispatch({
-        type: TODO_ACTIONS.SET_SORT,
-        payload: {
-          sortBy,
-          sortDirection: newSortDirection,
-        },
-      })
-    }
-    />
+      {isTodoListLoading && (
+        <p className={styles.loading}>Loading todos...</p>
+      )}
+      <div className={styles.controls}>
+          <SortBy
+            sortBy={sortBy}
+            sortDirection={sortDirection}
+            onSortByChange={(newSortBy) =>
+              dispatch({
+                type: TODO_ACTIONS.SET_SORT,
+                payload: {
+                  sortBy: newSortBy,
+                  sortDirection,
+                },
+              })
+            }
+            onSortDirectionChange={(newSortDirection) =>
+              dispatch({
+                type: TODO_ACTIONS.SET_SORT,
+                payload: {
+                  sortBy,
+                  sortDirection: newSortDirection,
+                },
+              })
+            }
+        />
+      </div>
       <StatusFilter />
       <FilterInput
         filterTerm={filterTerm}

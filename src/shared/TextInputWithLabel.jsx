@@ -1,4 +1,4 @@
-
+import styles from './Controls.module.css';
 
 export default function TextInputWithLabel({
     elementId,
@@ -9,13 +9,17 @@ export default function TextInputWithLabel({
 }) {
     return (
         <>
-            <label htmlFor={elementId}>{labelText}</label>
+            <label className={styles.label} htmlFor={elementId}>
+            {labelText}
+            </label>
+
             <input
-                type="text"
-                id={elementId}
-                ref={ref}
-                value={value}
-                onChange={onChange}
+            className={styles.input}
+            type="text"
+            id={elementId}
+            ref={ref}
+            value={value}
+            onChange={onChange}
             />
         </>
     );

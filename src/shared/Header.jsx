@@ -1,22 +1,27 @@
 import { useAuth } from '../contexts/AuthContext.jsx';
 import Navigation from './Navigation.jsx';
 import Logoff from '../features/Logoff.jsx';
+import styles from './Header.module.css';
 
 function Header() {
   const { email, isAuthenticated } = useAuth();
 
   return (
-    <header>
-      <h1>Todo List</h1>
+    <header className={styles.header}>
+      <div className={styles.headerContent}>
+        <div className={styles.topRow}>
+          <h1 className={styles.title}>Todo List</h1>
 
-      <Navigation />
+          {isAuthenticated && (
+            <div className={styles.userArea}>
+              <p className={styles.userName}>{email}</p>
+              <Logoff />
+            </div>
+          )}
+        </div>
 
-      {isAuthenticated && (
-        <>
-          <p>{email}</p>
-          <Logoff />
-        </>
-      )}
+        <Navigation />
+      </div>
     </header>
   );
 }

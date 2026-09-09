@@ -1,0 +1,51 @@
+.header {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 8px rgba(15, 42, 67, 0.15);
+}
+
+.headerContent {
+  width: min(100%, 900px);
+  margin: 0 auto;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.75rem;
+  color: white;
+}
+
+.userArea {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.userName {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 600px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .topRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .userArea {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useAuth } from '../contexts/AuthContext.jsx';
+import styles from './Page.module.css';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -36,39 +37,55 @@ function LoginPage() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      {authError && (
-        <div>
-          <p>{authError}</p>
-        </div>
-      )}
+    <div className={styles.page}>
+      <div className={styles.card}>
+        <h2 className={styles.title}>Login</h2>
 
-      <div>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          required
-        />
+        <form className={styles.form} onSubmit={handleSubmit}>
+          {authError && (
+            <p className={styles.error}>{authError}</p>
+          )}
+
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="email">
+              Email
+            </label>
+
+            <input
+              className={styles.input}
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="password">
+              Password
+            </label>
+
+            <input
+              className={styles.input}
+              id="password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+          </div>
+
+          <button
+            className={styles.button}
+            type="submit"
+            disabled={isLoggingOn}
+          >
+            {isLoggingOn ? 'Logging in...' : 'Log On'}
+          </button>
+        </form>
       </div>
-
-      <div>
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-        />
-      </div>
-
-      <button type="submit" disabled={isLoggingOn}>
-        {isLoggingOn ? 'Logging in...' : 'Log On'}
-      </button>
-    </form>
+    </div>
   );
 }
 

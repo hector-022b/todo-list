@@ -1,0 +1,42 @@
+.nav {
+  margin-top: 1rem;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  background-color: var(--color-primary-light);
+}
+
+.active {
+  background-color: var(--color-secondary);
+  color: white;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .list {
+    gap: 0.5rem;
+  }
+
+  .link {
+    padding: 0.5rem;
+  }
+}
