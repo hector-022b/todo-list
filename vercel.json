@@ -4,6 +4,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://ctd-learns-node-l42tx.ondigitalocean.app/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
