@@ -9,6 +9,7 @@ import NotFoundPage from './pages/NotFoundPage.jsx';
 import RequireAuth from './components/RequireAuth.jsx';
 import Header from './shared/Header.jsx';
 import styles from './App.module.css';
+import Footer from './shared/Footer.jsx';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
+      <Footer />
     </div>
   );
 }

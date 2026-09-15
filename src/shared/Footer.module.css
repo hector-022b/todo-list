@@ -1,0 +1,23 @@
+.footer {
+  margin-top: auto;
+  padding: 1.25rem 1rem;
+  background-color: var(--color-primary);
+  color: white;
+  text-align: center;
+}
+
+.text {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.link {
+  color: #93c5fd;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: white;
+  text-decoration: underline;
+}

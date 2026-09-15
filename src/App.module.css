@@ -1,4 +1,6 @@
 .app {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-background);
 }
@@ -7,6 +9,7 @@
   width: min(100% - 2rem, 900px);
   margin: 0 auto;
   padding: 2rem 0 3rem;
+  flex: 1;
 }
 
 @media (max-width: 600px) {
