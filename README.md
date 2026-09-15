@@ -44,11 +44,11 @@ https://hector-ctd-todo.vercel.app
 
 ### Desktop
 
-Add desktop screenshot here.
+![Todo List Desktop View](src/assets/todo-desktop.png)
 
 ### Mobile
 
-Add mobile screenshot here.
+![Todo List Mobile View](src/assets/todo-mobile.png)
 
 ## Installation
 
