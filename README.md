@@ -1,4 +1,3 @@
-
 # Todo List
 
 A responsive Todo List application built with React and Vite as part of the Code the Dream React curriculum.
@@ -182,4 +181,3 @@ This project was created for educational purposes as part of the Code the Dream 
 **Hector Barahona**
 
 GitHub: [hector-022b](https://github.com/hector-022b)
-````
