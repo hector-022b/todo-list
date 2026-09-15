@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import TodoListItem from './TodoListItem.jsx';
+import styles from './TodoList.module.css';
 
 function TodoList({
   todoList,
@@ -36,21 +37,21 @@ function TodoList({
   const getEmptyMessage = () => {
     switch (statusFilter) {
       case 'completed':
-        return 'No completed todos yet. Complete some tasks to see them here.';
+        return 'No Completed Todos Yet. Complete Some Tasks To See Them Here.';
 
       case 'active':
-        return 'No active todos. Add a todo above to get started.';
+        return 'No Active Todos. Add A Todo Above To Get Started.';
 
       case 'all':
       default:
-        return 'Add todo above to get started.';
+        return 'Add Todo Above To Get Started.';
     }
   };
 
   return filteredTodoList.todos.length === 0 ? (
-    <p>{getEmptyMessage()}</p>
+    <p className={styles.empty}>{getEmptyMessage()}</p>
   ) : (
-    <ul>
+    <ul className={styles.list}>
       {filteredTodoList.todos.map((todo) => (
         <TodoListItem
           key={todo.id}

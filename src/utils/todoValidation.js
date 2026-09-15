@@ -1,3 +1,10 @@
+export const MAX_TODO_TITLE_LENGTH = 100;
+
 export function isValidTodoTitle(title) {
-    return title.trim() !== '';
+    const trimmedTitle = title.trim();
+
+    return (
+        trimmedTitle !== '' &&
+        trimmedTitle.length <= MAX_TODO_TITLE_LENGTH
+    );
 }
