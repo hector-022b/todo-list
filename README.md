@@ -1,4 +1,4 @@
-````markdown
+
 # Todo List
 
 A responsive Todo List application built with React and Vite as part of the Code the Dream React curriculum.
