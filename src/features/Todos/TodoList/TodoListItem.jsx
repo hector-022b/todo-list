@@ -1,6 +1,6 @@
 import TextInputWithLabel from '../../../shared/TextInputWithLabel';
 import { useEditableTitle } from '../../../hooks/useEditableTitle';
-import { isValidTodoTitle } from '../../../utils/todoValidation';
+import { isValidTodoTitle, MAX_TODO_TITLE_LENGTH, } from '../../../utils/todoValidation';
 import styles from './TodoListItem.module.css';
 
 function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
@@ -17,6 +17,8 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
         if (!isEditing) return;
 
         event.preventDefault();
+
+        if (!isValidTodoTitle(workingTitle)) return;
 
         const finalTitle = finishEdit();
 
@@ -43,6 +45,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
                             labelText="Todo"
                             value={workingTitle}
                             onChange={handleEdit}
+                            maxLength={MAX_TODO_TITLE_LENGTH}
                         />
 
                         <button

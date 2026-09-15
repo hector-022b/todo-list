@@ -6,6 +6,7 @@ export default function TextInputWithLabel({
     onChange,
     ref,
     value,
+    maxLength,
 }) {
     return (
         <>
@@ -20,6 +21,7 @@ export default function TextInputWithLabel({
             ref={ref}
             value={value}
             onChange={onChange}
+            maxLength={maxLength}
             />
         </>
     );

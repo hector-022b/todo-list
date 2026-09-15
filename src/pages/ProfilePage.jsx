@@ -54,8 +54,8 @@ function ProfilePage() {
           completed,
           active,
         });
-      } catch (err) {
-        setError(`Error loading statistics: ${err.message}`);
+      } catch {
+        setError('There Was A Problem Loading Your Statistics.');
       } finally {
         setLoading(false);
       }

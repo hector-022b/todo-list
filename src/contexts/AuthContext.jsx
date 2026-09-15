@@ -43,13 +43,13 @@ export function AuthProvider({ children }) {
             }
 
             return {
-            success: false,
-            error: `Authentication failed: ${data?.message}`,
+                success: false,
+                error: 'Login Failed. Please Check Your Email And Password.',
             };
         } catch {
             return {
             success: false,
-            error: 'Network error during login',
+            error: 'Network Error During Login',
             };
         }
     };

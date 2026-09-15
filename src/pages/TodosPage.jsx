@@ -41,254 +41,257 @@ function TodosPage() {
   };
 
   useEffect(() => {
-  if (!token) {
-    return;
-  }
+    if (!token) {
+      return;
+    }
 
-  let ignore = false;
+    let ignore = false;
 
-  async function fetchTodos() {
+    async function fetchTodos() {
+      dispatch({
+        type: TODO_ACTIONS.FETCH_START,
+      });
+
+      try {
+        const paramsObject = {
+          sortBy,
+          sortDirection,
+          limit: 100,
+        };
+
+        if (debouncedFilterTerm) {
+          paramsObject.find = debouncedFilterTerm;
+        }
+
+        const params = new URLSearchParams(paramsObject);
+
+        const response = await fetch(`/api/tasks?${params}`, {
+          headers: {
+            'X-CSRF-TOKEN': token,
+          },
+          credentials: 'include',
+        });
+
+        if (response.status === 401) {
+          throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch todos');
+        }
+
+        const data = await response.json();
+
+        if (!ignore) {
+          dispatch({
+            type: TODO_ACTIONS.FETCH_SUCCESS,
+            payload: {
+              todos: data.tasks,
+            },
+          });
+        }
+      } catch (error) {
+        if (!ignore) {
+          const isFilterError =
+            debouncedFilterTerm ||
+            sortBy !== 'createdAt' ||
+            sortDirection !== 'asc';
+
+          const message =
+            error.message === 'Unauthorized'
+              ? 'You Are Not Authorized. Please Log In Again.'
+              : isFilterError
+                ? 'There Was A Problem Filtering Or Sorting Your Todos.'
+                : 'There Was A Problem Loading Your Todos.'
+
+          dispatch({
+            type: TODO_ACTIONS.FETCH_ERROR,
+            payload: {
+              message,
+              isFilterError: Boolean(isFilterError),
+            },
+          });
+        }
+      }
+    }
+
+    fetchTodos();
+
+    return () => {
+      ignore = true;
+    };
+  }, [token, sortBy, sortDirection, debouncedFilterTerm]);
+
+  async function addTodo(todoTitle) {
+    const newTodo = {
+      id: Date.now(),
+      title: todoTitle,
+      isCompleted: false,
+    };
+
     dispatch({
-      type: TODO_ACTIONS.FETCH_START,
+      type: TODO_ACTIONS.ADD_TODO_START,
+      payload: {
+        newTodo,
+      },
     });
 
     try {
-      const paramsObject = {
-        sortBy,
-        sortDirection,
-        limit: 100,
-      };
-
-      if (debouncedFilterTerm) {
-        paramsObject.find = debouncedFilterTerm;
-      }
-
-      const params = new URLSearchParams(paramsObject);
-
-      const response = await fetch(`/api/tasks?${params}`, {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           'X-CSRF-TOKEN': token,
         },
         credentials: 'include',
+        body: JSON.stringify({
+          title: todoTitle,
+          isCompleted: false,
+        }),
       });
 
-      if (response.status === 401) {
-        throw new Error('unauthorized');
-      }
-
       if (!response.ok) {
-        throw new Error('Failed to fetch todos');
+        throw new Error('Failed to add todo');
       }
 
       const data = await response.json();
+      const savedTodo = data.task ?? data;
 
-      if (!ignore) {
-        dispatch({
-          type: TODO_ACTIONS.FETCH_SUCCESS,
-          payload: {
-            todos: data.tasks,
-          },
-        });
-      }
-    } catch (error) {
-      if (!ignore) {
-        const isFilterError =
-          debouncedFilterTerm ||
-          sortBy !== 'createdAt' ||
-          sortDirection !== 'asc';
-
-        dispatch({
-          type: TODO_ACTIONS.FETCH_ERROR,
-          payload: {
-            message: isFilterError
-              ? `Error filtering/sorting todos: ${error.message}`
-              : `Error fetching todos: ${error.message}`,
-            isFilterError: Boolean(isFilterError),
-          },
-        });
-      }
+      dispatch({
+        type: TODO_ACTIONS.ADD_TODO_SUCCESS,
+        payload: {
+          tempId: newTodo.id,
+          savedTodo,
+        },
+      });
+    } catch {
+      dispatch({
+        type: TODO_ACTIONS.ADD_TODO_ERROR,
+        payload: {
+          tempId: newTodo.id,
+          message: 'There Was A Problem Adding Your Todo.',
+        },
+      });
     }
   }
-
-  fetchTodos();
-
-  return () => {
-    ignore = true;
-  };
-}, [token, sortBy, sortDirection, debouncedFilterTerm]);
-
-  async function addTodo(todoTitle) {
-  const newTodo = {
-    id: Date.now(),
-    title: todoTitle,
-    isCompleted: false,
-  };
-
-  dispatch({
-    type: TODO_ACTIONS.ADD_TODO_START,
-    payload: {
-      newTodo,
-    },
-  });
-
-  try {
-    const response = await fetch('/api/tasks', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token,
-      },
-      credentials: 'include',
-      body: JSON.stringify({
-        title: todoTitle,
-        isCompleted: false,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to add todo');
-    }
-
-    const data = await response.json();
-    const savedTodo = data.task ?? data;
-
-    dispatch({
-      type: TODO_ACTIONS.ADD_TODO_SUCCESS,
-      payload: {
-        tempId: newTodo.id,
-        savedTodo,
-      },
-    });
-  } catch (error) {
-    dispatch({
-      type: TODO_ACTIONS.ADD_TODO_ERROR,
-      payload: {
-        tempId: newTodo.id,
-        message: `Error adding todo: ${error.message}`,
-      },
-    });
-  }
-}
 
   async function completeTodo(id) {
-  const originalTodo = todoList.find((todo) => todo.id === id);
+    const originalTodo = todoList.find((todo) => todo.id === id);
 
-  if (!originalTodo) {
-    return;
-  }
-
-  dispatch({
-    type: TODO_ACTIONS.COMPLETE_TODO_START,
-    payload: {
-      id,
-    },
-  });
-
-  try {
-    const response = await fetch(`/api/tasks/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token,
-      },
-      credentials: 'include',
-      body: JSON.stringify({
-        isCompleted: true,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to complete todo');
+    if (!originalTodo) {
+      return;
     }
 
-    const data = await response.json();
-    const savedTodo = data.task ?? data;
+    dispatch({
+      type: TODO_ACTIONS.COMPLETE_TODO_START,
+      payload: {
+        id,
+      },
+    });
 
-    dispatch({
-      type: TODO_ACTIONS.COMPLETE_TODO_SUCCESS,
-      payload: {
-        id,
-        savedTodo,
-      },
-    });
-  } catch (error) {
-    dispatch({
-      type: TODO_ACTIONS.COMPLETE_TODO_ERROR,
-      payload: {
-        id,
-        originalTodo,
-        message: `Error completing todo: ${error.message}`,
-      },
-    });
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': token,
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          isCompleted: true,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed To Complete Todo');
+      }
+
+      const data = await response.json();
+      const savedTodo = data.task ?? data;
+
+      dispatch({
+        type: TODO_ACTIONS.COMPLETE_TODO_SUCCESS,
+        payload: {
+          id,
+          savedTodo,
+        },
+      });
+    } catch {
+      dispatch({
+        type: TODO_ACTIONS.COMPLETE_TODO_ERROR,
+        payload: {
+          id,
+          originalTodo,
+          message: 'There Was A Problem Completing Your Todo.',
+        },
+      });
+    }
   }
-}
 
   async function updateTodo(editedTodo) {
-  const originalTodo = todoList.find(
-    (todo) => todo.id === editedTodo.id
-  );
+    const originalTodo = todoList.find(
+      (todo) => todo.id === editedTodo.id
+    );
 
-  if (!originalTodo) {
-    return;
-  }
-
-  dispatch({
-    type: TODO_ACTIONS.UPDATE_TODO_START,
-    payload: {
-      editedTodo,
-    },
-  });
-
-  try {
-    const response = await fetch(`/api/tasks/${editedTodo.id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token,
-      },
-      credentials: 'include',
-      body: JSON.stringify({
-        title: editedTodo.title,
-        isCompleted: editedTodo.isCompleted,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to update todo');
+    if (!originalTodo) {
+      return;
     }
 
-    const data = await response.json();
-    const savedTodo = data.task ?? data;
+    dispatch({
+      type: TODO_ACTIONS.UPDATE_TODO_START,
+      payload: {
+        editedTodo,
+      },
+    });
 
-    dispatch({
-      type: TODO_ACTIONS.UPDATE_TODO_SUCCESS,
-      payload: {
-        id: editedTodo.id,
-        savedTodo,
-      },
-    });
-  } catch (error) {
-    dispatch({
-      type: TODO_ACTIONS.UPDATE_TODO_ERROR,
-      payload: {
-        id: editedTodo.id,
-        originalTodo,
-        message: `Error updating todo: ${error.message}`,
-      },
-    });
+    try {
+      const response = await fetch(`/api/tasks/${editedTodo.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': token,
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          title: editedTodo.title,
+          isCompleted: editedTodo.isCompleted,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed To Update Todo');
+      }
+
+      const data = await response.json();
+      const savedTodo = data.task ?? data;
+
+      dispatch({
+        type: TODO_ACTIONS.UPDATE_TODO_SUCCESS,
+        payload: {
+          id: editedTodo.id,
+          savedTodo,
+        },
+      });
+    } catch {
+      dispatch({
+        type: TODO_ACTIONS.UPDATE_TODO_ERROR,
+        payload: {
+          id: editedTodo.id,
+          originalTodo,
+          message: 'There Was A Problem Updating Your Todo.',
+        },
+      });
+    }
   }
-}
 
   return (
     <div className={styles.page}>
       <h2 className={styles.title}>My Todos</h2>
+
       {error && (
         <section className={styles.error}>
-          <p>
-            {error === 'unauthorized' ? 'You are not authorized. Please log in again.'
-              : error}
-          </p>
-          
+          <p>{error}</p>
+
           <button
             className={styles.errorButton}
             type="button"
@@ -318,7 +321,7 @@ function TodosPage() {
             >
               Clear Filter Error
             </button>
-            
+
             <button
               type="button"
               onClick={() =>
@@ -329,38 +332,41 @@ function TodosPage() {
             >
               Reset Filters
             </button>
-            </div>
           </div>
+        </div>
       )}
 
       {isTodoListLoading && (
         <p className={styles.loading}>Loading todos...</p>
       )}
+
       <div className={styles.controls}>
-          <SortBy
-            sortBy={sortBy}
-            sortDirection={sortDirection}
-            onSortByChange={(newSortBy) =>
-              dispatch({
-                type: TODO_ACTIONS.SET_SORT,
-                payload: {
-                  sortBy: newSortBy,
-                  sortDirection,
-                },
-              })
-            }
-            onSortDirectionChange={(newSortDirection) =>
-              dispatch({
-                type: TODO_ACTIONS.SET_SORT,
-                payload: {
-                  sortBy,
-                  sortDirection: newSortDirection,
-                },
-              })
-            }
+        <SortBy
+          sortBy={sortBy}
+          sortDirection={sortDirection}
+          onSortByChange={(newSortBy) =>
+            dispatch({
+              type: TODO_ACTIONS.SET_SORT,
+              payload: {
+                sortBy: newSortBy,
+                sortDirection,
+              },
+            })
+          }
+          onSortDirectionChange={(newSortDirection) =>
+            dispatch({
+              type: TODO_ACTIONS.SET_SORT,
+              payload: {
+                sortBy,
+                sortDirection: newSortDirection,
+              },
+            })
+          }
         />
       </div>
+
       <StatusFilter />
+
       <FilterInput
         filterTerm={filterTerm}
         onFilterChange={handleFilterChange}
@@ -379,4 +385,4 @@ function TodosPage() {
   );
 }
 
-export default TodosPage; 
+export default TodosPage;

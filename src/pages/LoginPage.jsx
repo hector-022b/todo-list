@@ -57,6 +57,7 @@ function LoginPage() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              maxLength={254}
               required
             />
           </div>
@@ -72,6 +73,7 @@ function LoginPage() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              maxLength={128}
               required
             />
           </div>
