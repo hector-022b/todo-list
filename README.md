@@ -6,7 +6,7 @@ The application allows authenticated users to create, edit, complete, search, fi
 
 ## Live Demo
 
-[View the Live Demo](VERCEL-URL-HERE)
+https://hector-ctd-todo.vercel.app
 
 ## Features
 
