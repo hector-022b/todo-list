@@ -10,7 +10,7 @@ function SortBy({
     <div className={styles.controlGroup}>
       <div className={styles.field}>
         <label className={styles.label} htmlFor="sortBy">
-          Sort by
+          Sort by:
         </label>
 
         <select
@@ -26,7 +26,7 @@ function SortBy({
 
       <div className={styles.field}>
         <label className={styles.label} htmlFor="sortDirection">
-          Order
+          Order:
         </label>
 
         <select
