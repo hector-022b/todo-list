@@ -3,7 +3,12 @@ import { useEditableTitle } from '../../../hooks/useEditableTitle';
 import { isValidTodoTitle, MAX_TODO_TITLE_LENGTH, } from '../../../utils/todoValidation';
 import styles from './TodoListItem.module.css';
 
-function TodoListItem({ todo, onCompleteTodo, onUpdateTodo, onDeleteTodo, }) {
+function TodoListItem({
+    todo,
+    onCompleteTodo,
+    onUpdateTodo,
+    onDeleteTodo,
+}) {
     const {
         isEditing,
         workingTitle,
@@ -77,15 +82,6 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo, onDeleteTodo, }) {
                             />
                         </label>
 
-                        <span
-                            className={`${styles.title} ${
-                                todo.isCompleted ? styles.completed : ''
-                            }`}
-                            onClick={startEditing}
-                        >
-                            {todo.title}
-                        </span>
-                        
                         <span
                             className={`${styles.title} ${
                                 todo.isCompleted ? styles.completed : ''
