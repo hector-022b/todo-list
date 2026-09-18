@@ -16,3 +16,13 @@
   color: var(--color-text-light);
   text-align: center;
 }
+
+.deleteButton {
+  margin-left: auto;
+  background-color: var(--color-error);
+  color: white;
+}
+
+.deleteButton:hover {
+  opacity: 0.9;
+}

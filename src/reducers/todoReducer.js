@@ -1,25 +1,25 @@
 export const TODO_ACTIONS = {
-  // Fetch operations
+
   FETCH_START: 'FETCH_START',
   FETCH_SUCCESS: 'FETCH_SUCCESS',
   FETCH_ERROR: 'FETCH_ERROR',
 
-  // Add todo operations
   ADD_TODO_START: 'ADD_TODO_START',
   ADD_TODO_SUCCESS: 'ADD_TODO_SUCCESS',
   ADD_TODO_ERROR: 'ADD_TODO_ERROR',
 
-  // Complete todo operations
   COMPLETE_TODO_START: 'COMPLETE_TODO_START',
   COMPLETE_TODO_SUCCESS: 'COMPLETE_TODO_SUCCESS',
   COMPLETE_TODO_ERROR: 'COMPLETE_TODO_ERROR',
 
-  // Update todo operations
   UPDATE_TODO_START: 'UPDATE_TODO_START',
   UPDATE_TODO_SUCCESS: 'UPDATE_TODO_SUCCESS',
   UPDATE_TODO_ERROR: 'UPDATE_TODO_ERROR',
 
-  // UI operations
+  DELETE_TODO_START: 'DELETE_TODO_START',
+ DELETE_TODO_SUCCESS: 'DELETE_TODO_SUCCESS',
+ DELETE_TODO_ERROR: 'DELETE_TODO_ERROR',
+
   SET_SORT: 'SET_SORT',
   SET_FILTER: 'SET_FILTER',
   CLEAR_ERROR: 'CLEAR_ERROR',
@@ -128,6 +128,28 @@ export function todoReducer(state, action) {
                     ? action.payload.originalTodo
                     : todo
                 ),
+                error: action.payload.message,
+            };
+        
+        case TODO_ACTIONS.DELETE_TODO_START:
+            return {
+                ...state,
+                error: '',
+                filterError: '',
+            };
+
+        case TODO_ACTIONS.DELETE_TODO_SUCCESS:
+            return {
+                ...state,
+                todoList: state.todoList.filter(
+                    (todo) => todo.id !== action.payload.id
+                ),
+                dataVersion: state.dataVersion + 1,
+            };
+
+        case TODO_ACTIONS.DELETE_TODO_ERROR:
+            return {
+                ...state,
                 error: action.payload.message,
             };
         

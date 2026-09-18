@@ -6,6 +6,8 @@ import styles from './Page.module.css';
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [authError, setAuthError] = useState('');
   const [isLoggingOn, setIsLoggingOn] = useState(false);
 
@@ -24,8 +26,30 @@ function LoginPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    setIsLoggingOn(true);
+    setEmailError('');
+    setPasswordError('');
     setAuthError('');
+
+    let hasError = false;
+
+    if (!email.trim()) {
+      setEmailError('Email Is Required.');
+      hasError = true;
+    } else if (!email.includes('@')) {
+      setEmailError('Please Enter A Valid Email Address.');
+      hasError = true;
+    }
+
+    if (!password.trim()) {
+      setPasswordError('Password Is Required.');
+      hasError = true;
+    }
+
+    if (hasError) {
+      return;
+    }
+
+    setIsLoggingOn(true);
 
     const result = await login(email, password);
 
@@ -41,7 +65,11 @@ function LoginPage() {
       <div className={styles.card}>
         <h2 className={styles.title}>Login</h2>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form
+          className={styles.form}
+          onSubmit={handleSubmit}
+          noValidate
+        >
           {authError && (
             <p className={styles.error}>{authError}</p>
           )}
@@ -56,10 +84,24 @@ function LoginPage() {
               id="email"
               type="email"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                setEmailError('');
+              }}
               maxLength={254}
+              aria-invalid={Boolean(emailError)}
+              aria-describedby={emailError ? 'emailError' : undefined}
               required
             />
+
+            {emailError && (
+              <p
+                id="emailError"
+                className={styles.fieldError}
+              >
+                {emailError}
+              </p>
+            )}
           </div>
 
           <div className={styles.field}>
@@ -72,10 +114,24 @@ function LoginPage() {
               id="password"
               type="password"
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setPasswordError('');
+              }}
               maxLength={128}
+              aria-invalid={Boolean(passwordError)}
+              aria-describedby={passwordError ? 'passwordError' : undefined}
               required
             />
+
+            {passwordError && (
+              <p
+                id="passwordError"
+                className={styles.fieldError}
+              >
+                {passwordError}
+              </p>
+            )}
           </div>
 
           <button
