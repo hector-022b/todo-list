@@ -284,6 +284,41 @@ function TodosPage() {
     }
   }
 
+  async function deleteTodo(id) {
+    dispatch({
+      type: TODO_ACTIONS.DELETE_TODO_START,
+    });
+
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRF-TOKEN': token,
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed To Delete Todo');
+      }
+
+      dispatch({
+        type: TODO_ACTIONS.DELETE_TODO_SUCCESS,
+        payload: {
+          id,
+        },
+      });
+    } catch {
+      dispatch({
+        type: TODO_ACTIONS.DELETE_TODO_ERROR,
+        payload: {
+          message: 'There Was A Problem Deleting Your Todo.',
+        },
+      });
+    }
+  }
+
+
   return (
     <div className={styles.page}>
       <h2 className={styles.title}>My Todos</h2>
@@ -312,6 +347,7 @@ function TodosPage() {
 
           <div className={styles.errorActions}>
             <button
+              className={styles.errorButton}
               type="button"
               onClick={() =>
                 dispatch({
@@ -323,6 +359,7 @@ function TodosPage() {
             </button>
 
             <button
+              className={styles.secondaryButton}
               type="button"
               onClick={() =>
                 dispatch({
@@ -363,14 +400,14 @@ function TodosPage() {
             })
           }
         />
+
+        <StatusFilter />
+
+        <FilterInput
+          filterTerm={filterTerm}
+          onFilterChange={handleFilterChange}
+        />
       </div>
-
-      <StatusFilter />
-
-      <FilterInput
-        filterTerm={filterTerm}
-        onFilterChange={handleFilterChange}
-      />
 
       <TodoForm onAddTodo={addTodo} />
 
@@ -378,6 +415,7 @@ function TodosPage() {
         todoList={todoList}
         onCompleteTodo={completeTodo}
         onUpdateTodo={updateTodo}
+        onDeleteTodo={deleteTodo}
         dataVersion={dataVersion}
         statusFilter={statusFilter}
       />

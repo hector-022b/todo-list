@@ -127,3 +127,14 @@
   color: var(--color-primary);
   font-weight: 600;
 }
+
+.fieldError {
+  margin: 0;
+  color: var(--color-error);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
